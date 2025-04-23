@@ -1,7 +1,53 @@
 import streamlit as st
 
 st.set_page_config(page_title="Calculadora de Retribución", layout="centered")
-st.title("💼 Calculadora de Retribución del Representante")
+
+# Modo oscuro/claro toggle
+if 'dark_mode' not in st.session_state:
+    st.session_state.dark_mode = True
+
+modo = st.toggle("🌙 Modo oscuro", value=st.session_state.dark_mode)
+st.session_state.dark_mode = modo
+
+# CSS dependiendo del modo
+if st.session_state.dark_mode:
+    st.markdown("""
+    <style>
+        body, .block-container {
+            background-color: #0e1117;
+            color: #f5f5f5;
+        }
+        .stButton>button {
+            background-color: #1f77b4;
+            color: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+        .stButton>button:hover {
+            background-color: #045d9f;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <style>
+        body, .block-container {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .stButton>button {
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+        .stButton>button:hover {
+            background-color: #084298;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.title("📋 Calculadora de Retribución del Representante")
 
 st.markdown("""
 Esta herramienta te permite calcular la retribución anual de un representante 
