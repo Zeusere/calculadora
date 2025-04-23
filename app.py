@@ -5,7 +5,7 @@ st.title("💼 Calculadora de Retribución del Representante")
 
 st.markdown("""
 Esta herramienta te permite calcular la retribución anual de un representante 
-según los saldos gestionados, el margen de MAPFRE y el cumplimiento de variables cualitativas.
+según los saldos gestionados, el margen de la distribuidora y el cumplimiento de variables cualitativas.
 """)
 
 # Formulario dinámico con inputs
@@ -13,7 +13,7 @@ with st.form("formulario_retribucion"):
     st.header("Datos Cuantitativos")
     saldos_asesoramiento = st.number_input("Saldos medios asesoramiento no independiente (€):", min_value=0.0, value=7000000.0, step=100000.0)
     saldos_rto = st.number_input("Saldos medios servicio RTO (€):", min_value=0.0, value=3000000.0, step=100000.0)
-    margen_pct = st.number_input("Margen neto aplicado por MAPFRE (%):", min_value=0.0, value=1.0, step=0.1)
+    margen_pct = st.number_input("Margen de la distribuidora (%):", min_value=0.0, value=1.0, step=0.1)
 
     st.header("Variables Cuantitativas")
     v1 = st.selectbox("¿Variable 1 (saldos medios 2024 ≥ 3.000.000 €) cumplida?", ["No", "Sí"])
