@@ -47,7 +47,7 @@ else:
     </style>
     """, unsafe_allow_html=True)
 
-st.title("📋 Calculadora de Retribución del Representante")
+st.title("📋 Calculadora de Retribución del")
 
 st.markdown("""
 Esta herramienta te permite calcular la retribución anual de un representante 
