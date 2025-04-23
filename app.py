@@ -41,7 +41,7 @@ if submit:
     retribucion_final = retribucion_total + retrib_cualitativa
 
     st.success("\U0001F4B0 Resultado de la Retribución")
-    st.write(f"**Margen bruto de MAPFRE:** {margen_total:,.2f} €")
+    st.write(f"**Margen bruto de la Distribuidora:** {margen_total:,.2f} €")
     st.write(f"**Límite 75% para el agente:** {comision_maxima:,.2f} €")
     st.write(f"**Retribución por asesoramiento:** {retrib_asesoramiento:,.2f} €")
     st.write(f"**Retribución por RTO:** {retrib_rto:,.2f} €")
