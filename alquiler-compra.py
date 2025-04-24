@@ -25,6 +25,10 @@ st.markdown("""
     .stButton > button:hover {
         background-color: #004a99;
     }
+    summary {
+        font-weight: bold;
+        margin-top: 1rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,7 +65,7 @@ if calcular:
     valor_neto_acumulado = []
 
     ahorro_invertido = ahorro
-    tasa_inversion /= 100  # convertir a decimal
+    tasa_inversion /= 100
 
     for anio in range(1, anios + 1):
         total_anual_alquiler = alquiler_actual * 12
@@ -101,3 +105,20 @@ if calcular:
     st.markdown("""
     ⚠️ Esta comparativa es estimativa. No incluye gastos de compra, impuestos, seguros, mantenimiento, ni beneficios por revalorización real futura.
     """)
+
+    st.subheader("📋 Tabla resumen de resultados año a año")
+    st.dataframe(df.style.format("{:.2f}"))
+
+    st.subheader("❓ Preguntas frecuentes sobre esta simulación")
+    with st.expander("¿Qué es 'Valor Neto Compra'?"):
+        st.markdown("Es la diferencia entre el valor estimado de la vivienda en el futuro y el total pagado en cuotas de hipoteca. Representa el patrimonio acumulado al comprar.")
+
+    with st.expander("¿Qué significa 'Riqueza Alquilando'?"):
+        st.markdown("Es el resultado de invertir el ahorro inicial y restar todos los pagos de alquiler. Representa el patrimonio neto acumulado si decides alquilar.")
+
+    with st.expander("¿Por qué se descuenta el ahorro inicial en el caso de compra?"):
+        st.markdown("Ese dinero deja de estar disponible (liquidez) porque se utiliza como entrada. Se incorpora en el valor de la vivienda, pero ya no puede invertirse como en el caso de alquilar.")
+
+    with st.expander("¿Puedo confiar en esta simulación?"):
+        st.markdown("Esta herramienta está basada en cálculos matemáticos estándar, pero **no sustituye asesoramiento financiero profesional**. Considera esta simulación como una orientación inicial para tomar decisiones.")
+
