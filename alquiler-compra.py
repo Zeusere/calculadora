@@ -52,29 +52,41 @@ if calcular:
     else:
         cuota_mensual = hipoteca / meses
 
-    total_comprar = cuota_mensual * meses
-    valor_futuro_inmueble = precio_vivienda * ((1 + 0.02) ** anios)
-    valor_neto_comprar = valor_futuro_inmueble - total_comprar
-
     alquiler_total = 0
     alquiler_actual = alquiler_mensual
-    alquiler_evolucion = []
 
-    for anio in range(anios):
-        total_anual = alquiler_actual * 12
-        alquiler_total += total_anual
-        alquiler_evolucion.append((anio + 1, alquiler_total, total_comprar / anios * (anio + 1)))
+    alquileres = []
+    hipoteca_acumulada = 0
+    valor_vivienda = precio_vivienda
+    valor_neto_acumulado = []
+
+    for anio in range(1, anios + 1):
+        total_anual_alquiler = alquiler_actual * 12
+        alquiler_total += total_anual_alquiler
+        alquileres.append(alquiler_total)
         alquiler_actual *= (1 + incremento_alquiler / 100)
 
-    df = pd.DataFrame(alquiler_evolucion, columns=["Año", "Coste de Alquilar", "Coste de Comprar"])
+        hipoteca_acumulada += cuota_mensual * 12
+        valor_vivienda *= (1 + 0.02)
+
+        valor_neto = valor_vivienda - hipoteca_acumulada
+        valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto))
+
+    df = pd.DataFrame(valor_neto_acumulado, columns=["Año", "Coste de Alquilar", "Pagado en Hipoteca", "Valor Vivienda", "Valor Neto Compra"])
 
     st.success("Resultado comparativo")
     st.markdown(f"**💸 Coste total de alquilar durante {anios} años:** {alquiler_total:,.2f} €")
-    st.markdown(f"**🏠 Coste total de hipoteca (sin impuestos, seguros, etc):** {total_comprar:,.2f} €")
-    st.markdown(f"**📈 Valor estimado de la vivienda tras {anios} años (2% anual):** {valor_futuro_inmueble:,.2f} €")
-    st.markdown(f"**💼 Valor neto acumulado por compra (valor futuro - pagos):** {valor_neto_comprar:,.2f} €")
+    st.markdown(f"**💰 Pagos totales de hipoteca en {anios} años:** {hipoteca_acumulada:,.2f} €")
+    st.markdown(f"**📈 Valor estimado de la vivienda tras {anios} años (2% anual):** {valor_vivienda:,.2f} €")
+    st.markdown(f"**💼 Valor neto acumulado por compra (valor - pagos):** {df.iloc[-1]['Valor Neto Compra']:,.2f} €")
 
     st.line_chart(df.set_index("Año"))
+
+    # Recomendación
+    if df.iloc[-1]['Valor Neto Compra'] > alquiler_total:
+        st.success("✅ Según estos datos, **comprar** parece más rentable a largo plazo que alquilar.")
+    else:
+        st.warning("⚠️ Según estos datos, **alquilar** podría ser más rentable que comprar en este caso.")
 
     st.markdown("""
     ⚠️ Esta comparativa es estimativa. No incluye gastos de compra, impuestos, seguros, mantenimiento, ni beneficios por revalorización real futura.
