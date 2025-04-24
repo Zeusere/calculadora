@@ -90,6 +90,7 @@ if calcular:
     st.markdown(f"**💼 Valor neto acumulado por compra (valor - pagos):** {df.iloc[-1]['Valor Neto Compra']:,.2f} €")
     st.markdown(f"**📊 Valor del ahorro invertido si se alquila:** {df.iloc[-1]['Ahorro Invertido Alquilando']:,.2f} €")
     st.markdown(f"**🧮 Riqueza neta alquilando (ahorro - alquiler):** {df.iloc[-1]['Riqueza Alquilando']:,.2f} €")
+    st.markdown(f"**📆 Cuota mensual estimada de hipoteca:** {cuota_mensual:,.2f} €")
 
     chart_df = df.set_index("Año")[["Valor Neto Compra", "Riqueza Alquilando"]]
     st.line_chart(chart_df)
@@ -119,6 +120,18 @@ if calcular:
     with st.expander("¿Por qué se descuenta el ahorro inicial en el caso de compra?"):
         st.markdown("Ese dinero deja de estar disponible (liquidez) porque se utiliza como entrada. Se incorpora en el valor de la vivienda, pero ya no puede invertirse como en el caso de alquilar.")
 
+    with st.expander("¿Cómo se calcula la cuota hipotecaria?"):
+        st.markdown("""
+        Se utiliza la fórmula estándar para préstamos con interés compuesto:
+
+        \[\text{Cuota mensual} = P \cdot \frac{r}{1 - (1 + r)^{-n}}\]
+
+        - **P**: capital del préstamo (precio del inmueble - entrada aportada)
+        - **r**: interés mensual (interés anual / 12 / 100)
+        - **n**: número total de pagos (años × 12)
+
+        Esto permite calcular la cuota mensual constante necesaria para amortizar completamente el préstamo en el plazo elegido.
+        """)
+
     with st.expander("¿Puedo confiar en esta simulación?"):
         st.markdown("Esta herramienta está basada en cálculos matemáticos estándar, pero **no sustituye asesoramiento financiero profesional**. Considera esta simulación como una orientación inicial para tomar decisiones.")
-
