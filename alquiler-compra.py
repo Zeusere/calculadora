@@ -72,7 +72,7 @@ if calcular:
         valor_vivienda *= (1 + 0.02)
         ahorro_invertido *= (1 + tasa_inversion)
 
-        valor_neto = valor_vivienda - hipoteca_acumulada
+        valor_neto = valor_vivienda - (hipoteca_acumulada + ahorro)
         riqueza_alquilar = ahorro_invertido - alquiler_total
 
         valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto, ahorro_invertido, riqueza_alquilar))
