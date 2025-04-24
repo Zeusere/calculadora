@@ -37,24 +37,33 @@ with st.form("form_inversion"):
     simular = st.form_submit_button("Simular 🚀")
 
 if simular:
-    # Determinar la tasa según perfil
     tasas = {"Prudente (3%)": 0.03, "Moderado (6%)": 0.06, "Atrevido (10%)": 0.10}
     tasa_anual = tasas[perfil]
     tasa_mensual = (1 + tasa_anual) ** (1 / 12) - 1
 
-    total = aportacion_inicial
+    total_invertido = aportacion_inicial
+    total_no_invertido = aportacion_inicial
     datos = []
 
     for mes in range(anos * 12 + 1):
-        datos.append((mes / 12, total))
-        total = total * (1 + tasa_mensual) + aportacion_mensual
+        datos.append((mes / 12, total_invertido, total_no_invertido))
+        total_invertido = total_invertido * (1 + tasa_mensual) + aportacion_mensual
+        total_no_invertido += aportacion_mensual
 
-    df = pd.DataFrame(datos, columns=["Años", "Valor acumulado"])
+    df = pd.DataFrame(datos, columns=["Años", "Con inversión", "Sin inversión"])
 
     st.success("✅ Simulación completada")
-    st.metric(label="Valor estimado al vencimiento", value=f"{df.iloc[-1]['Valor acumulado']:,.2f} €")
+    st.metric(label="Valor estimado al vencimiento con inversión", value=f"{df.iloc[-1]['Con inversión']:,.2f} €")
 
-    st.line_chart(df.set_index("Años"))
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(df["Años"], df["Con inversión"], label="Con inversión", linewidth=3)
+    ax.plot(df["Años"], df["Sin inversión"], label="Sin inversión", linestyle="--", linewidth=2, color="gray")
+    ax.set_ylabel("Valor acumulado (€)")
+    ax.set_xlabel("Años")
+    ax.set_title("Evolución del patrimonio")
+    ax.legend()
+    ax.grid(True)
+    st.pyplot(fig)
 
     st.markdown("""
     Esta simulación es una estimación basada en rentabilidades constantes y no representa una garantía de rentabilidad futura. 
