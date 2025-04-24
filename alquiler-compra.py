@@ -40,6 +40,7 @@ with st.form("comparador"):
         incremento_alquiler = st.slider("% incremento anual del alquiler:", 0.0, 10.0, 2.0, step=0.1)
         anios = st.slider("Años de análisis:", 5, 40, 25)
 
+    tasa_inversion = st.slider("Rentabilidad esperada del ahorro si alquilas (% anual):", 0.0, 15.0, 2.0, step=0.1)
     calcular = st.form_submit_button("Calcular 📊")
 
 if calcular:
@@ -60,28 +61,23 @@ if calcular:
     valor_neto_acumulado = []
 
     ahorro_invertido = ahorro
-    tasa_inversion = 0.02
+    tasa_inversion /= 100  # convertir a decimal
 
     for anio in range(1, anios + 1):
-        # Alquiler acumulado
         total_anual_alquiler = alquiler_actual * 12
         alquiler_total += total_anual_alquiler
         alquiler_actual *= (1 + incremento_alquiler / 100)
 
-        # Hipoteca acumulada
         hipoteca_acumulada += cuota_mensual * 12
-
-        # Valor vivienda revalorizada
         valor_vivienda *= (1 + 0.02)
-
-        # Ahorro invertido con rentabilidad acumulada
         ahorro_invertido *= (1 + tasa_inversion)
 
-        # Valor neto compra vs alquilar con ahorro invertido
         valor_neto = valor_vivienda - hipoteca_acumulada
-        valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto, ahorro_invertido))
+        riqueza_alquilar = ahorro_invertido - alquiler_total
 
-    df = pd.DataFrame(valor_neto_acumulado, columns=["Año", "Coste de Alquilar", "Pagado en Hipoteca", "Valor Vivienda", "Valor Neto Compra", "Ahorro Invertido Alquilando"])
+        valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto, ahorro_invertido, riqueza_alquilar))
+
+    df = pd.DataFrame(valor_neto_acumulado, columns=["Año", "Coste de Alquilar", "Pagado en Hipoteca", "Valor Vivienda", "Valor Neto Compra", "Ahorro Invertido Alquilando", "Riqueza Alquilando"])
 
     st.success("Resultado comparativo")
     st.markdown(f"**💸 Coste total de alquilar durante {anios} años:** {alquiler_total:,.2f} €")
@@ -89,17 +85,18 @@ if calcular:
     st.markdown(f"**📈 Valor estimado de la vivienda tras {anios} años (2% anual):** {valor_vivienda:,.2f} €")
     st.markdown(f"**💼 Valor neto acumulado por compra (valor - pagos):** {df.iloc[-1]['Valor Neto Compra']:,.2f} €")
     st.markdown(f"**📊 Valor del ahorro invertido si se alquila:** {df.iloc[-1]['Ahorro Invertido Alquilando']:,.2f} €")
+    st.markdown(f"**🧮 Riqueza neta alquilando (ahorro - alquiler):** {df.iloc[-1]['Riqueza Alquilando']:,.2f} €")
 
-    st.line_chart(df.set_index("Año"))
+    chart_df = df.set_index("Año")[["Valor Neto Compra", "Riqueza Alquilando"]]
+    st.line_chart(chart_df)
 
-    # Comparativa inteligente
     riqueza_comprar = df.iloc[-1]['Valor Neto Compra']
-    riqueza_alquilar = df.iloc[-1]['Ahorro Invertido Alquilando'] - alquiler_total
+    riqueza_alquilar = df.iloc[-1]['Riqueza Alquilando']
 
     if riqueza_comprar > riqueza_alquilar:
-        st.success("✅ Según estos datos, **comprar** parece más rentable a largo plazo que alquilar, considerando el ahorro invertido.")
+        st.success("✅ Según estos datos, **comprar** parece más rentable a largo plazo que alquilar, considerando la rentabilidad del ahorro.")
     else:
-        st.warning("⚠️ Según estos datos, **alquilar** podría ser más rentable que comprar, considerando el ahorro invertido con rentabilidad del 2%.")
+        st.warning("⚠️ Según estos datos, **alquilar** podría ser más rentable que comprar, considerando la rentabilidad del ahorro disponible.")
 
     st.markdown("""
     ⚠️ Esta comparativa es estimativa. No incluye gastos de compra, impuestos, seguros, mantenimiento, ni beneficios por revalorización real futura.
