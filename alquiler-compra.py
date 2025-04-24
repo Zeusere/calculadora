@@ -133,5 +133,14 @@ if calcular:
         Esto permite calcular la cuota mensual constante necesaria para amortizar completamente el préstamo en el plazo elegido.
         """)
 
+    with st.expander("¿Por qué el gráfico de compra muestra valor desde el inicio si aún tengo deuda?"):
+        st.markdown("""
+        Para facilitar la interpretación visual, el gráfico parte desde el valor estimado de la vivienda y va restando los pagos realizados, lo que puede representar intuitivamente el avance del patrimonio. 
+
+        Aunque en realidad gran parte del inmueble está financiado por la hipoteca en los primeros años, mostrar el valor neto desde el inicio ayuda a comparar visualmente cómo evoluciona el beneficio potencial frente a alquilar.
+
+        No obstante, puedes consultar la deuda pendiente cada año en la tabla resumen para una visión más exacta del patrimonio real.
+        """)
+
     with st.expander("¿Puedo confiar en esta simulación?"):
         st.markdown("Esta herramienta está basada en cálculos matemáticos estándar, pero **no sustituye asesoramiento financiero profesional**. Considera esta simulación como una orientación inicial para tomar decisiones.")
