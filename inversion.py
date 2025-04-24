@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Simulador de Inversiones", layout="centered")
 st.title("📈 Simulador de Inversión a Largo Plazo")
@@ -55,17 +54,10 @@ if simular:
     st.success("✅ Simulación completada")
     st.metric(label="Valor estimado al vencimiento con inversión", value=f"{df.iloc[-1]['Con inversión']:,.2f} €")
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(df["Años"], df["Con inversión"], label="Con inversión", linewidth=3)
-    ax.plot(df["Años"], df["Sin inversión"], label="Sin inversión", linestyle="--", linewidth=2, color="gray")
-    ax.set_ylabel("Valor acumulado (€)")
-    ax.set_xlabel("Años")
-    ax.set_title("Evolución del patrimonio")
-    ax.legend()
-    ax.grid(True)
-    st.pyplot(fig)
+    st.line_chart(df.set_index("Años"))
 
     st.markdown("""
     Esta simulación es una estimación basada en rentabilidades constantes y no representa una garantía de rentabilidad futura. 
     Las inversiones están sujetas a riesgos.
     """)
+
