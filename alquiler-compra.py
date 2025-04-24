@@ -55,38 +55,51 @@ if calcular:
     alquiler_total = 0
     alquiler_actual = alquiler_mensual
 
-    alquileres = []
     hipoteca_acumulada = 0
     valor_vivienda = precio_vivienda
     valor_neto_acumulado = []
 
+    ahorro_invertido = ahorro
+    tasa_inversion = 0.02
+
     for anio in range(1, anios + 1):
+        # Alquiler acumulado
         total_anual_alquiler = alquiler_actual * 12
         alquiler_total += total_anual_alquiler
-        alquileres.append(alquiler_total)
         alquiler_actual *= (1 + incremento_alquiler / 100)
 
+        # Hipoteca acumulada
         hipoteca_acumulada += cuota_mensual * 12
+
+        # Valor vivienda revalorizada
         valor_vivienda *= (1 + 0.02)
 
-        valor_neto = valor_vivienda - hipoteca_acumulada
-        valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto))
+        # Ahorro invertido con rentabilidad acumulada
+        ahorro_invertido *= (1 + tasa_inversion)
 
-    df = pd.DataFrame(valor_neto_acumulado, columns=["Año", "Coste de Alquilar", "Pagado en Hipoteca", "Valor Vivienda", "Valor Neto Compra"])
+        # Valor neto compra vs alquilar con ahorro invertido
+        valor_neto = valor_vivienda - hipoteca_acumulada
+        valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto, ahorro_invertido))
+
+    df = pd.DataFrame(valor_neto_acumulado, columns=["Año", "Coste de Alquilar", "Pagado en Hipoteca", "Valor Vivienda", "Valor Neto Compra", "Ahorro Invertido Alquilando"])
 
     st.success("Resultado comparativo")
     st.markdown(f"**💸 Coste total de alquilar durante {anios} años:** {alquiler_total:,.2f} €")
     st.markdown(f"**💰 Pagos totales de hipoteca en {anios} años:** {hipoteca_acumulada:,.2f} €")
     st.markdown(f"**📈 Valor estimado de la vivienda tras {anios} años (2% anual):** {valor_vivienda:,.2f} €")
     st.markdown(f"**💼 Valor neto acumulado por compra (valor - pagos):** {df.iloc[-1]['Valor Neto Compra']:,.2f} €")
+    st.markdown(f"**📊 Valor del ahorro invertido si se alquila:** {df.iloc[-1]['Ahorro Invertido Alquilando']:,.2f} €")
 
     st.line_chart(df.set_index("Año"))
 
-    # Recomendación
-    if df.iloc[-1]['Valor Neto Compra'] > alquiler_total:
-        st.success("✅ Según estos datos, **comprar** parece más rentable a largo plazo que alquilar.")
+    # Comparativa inteligente
+    riqueza_comprar = df.iloc[-1]['Valor Neto Compra']
+    riqueza_alquilar = df.iloc[-1]['Ahorro Invertido Alquilando'] - alquiler_total
+
+    if riqueza_comprar > riqueza_alquilar:
+        st.success("✅ Según estos datos, **comprar** parece más rentable a largo plazo que alquilar, considerando el ahorro invertido.")
     else:
-        st.warning("⚠️ Según estos datos, **alquilar** podría ser más rentable que comprar en este caso.")
+        st.warning("⚠️ Según estos datos, **alquilar** podría ser más rentable que comprar, considerando el ahorro invertido con rentabilidad del 2%.")
 
     st.markdown("""
     ⚠️ Esta comparativa es estimativa. No incluye gastos de compra, impuestos, seguros, mantenimiento, ni beneficios por revalorización real futura.
