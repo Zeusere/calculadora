@@ -60,39 +60,34 @@ if calcular:
     alquiler_total = 0
     alquiler_actual = alquiler_mensual
 
-    saldo_pendiente = hipoteca
+    hipoteca_acumulada = 0
     valor_vivienda = precio_vivienda
+    valor_neto_acumulado = []
+
     ahorro_invertido = ahorro
     tasa_inversion /= 100
-
-    valor_neto_acumulado = []
 
     for anio in range(1, anios + 1):
         total_anual_alquiler = alquiler_actual * 12
         alquiler_total += total_anual_alquiler
         alquiler_actual *= (1 + incremento_alquiler / 100)
 
-        # Revalorización vivienda
+        hipoteca_acumulada += cuota_mensual * 12
         valor_vivienda *= (1 + 0.02)
-
-        # Amortización del préstamo (usando fórmula de saldo pendiente)
-        saldo_pendiente = hipoteca * ((1 + interes_mensual) ** (meses) - (1 + interes_mensual) ** (anio * 12)) / ((1 + interes_mensual) ** meses - 1)
-
-        valor_neto = valor_vivienda - saldo_pendiente
-
-        # Ahorro si alquilas
         ahorro_invertido *= (1 + tasa_inversion)
+
+        valor_neto = valor_vivienda - hipoteca_acumulada
         riqueza_alquilar = ahorro_invertido - alquiler_total
 
-        valor_neto_acumulado.append((anio, alquiler_total, cuota_mensual * anio * 12, valor_vivienda, valor_neto, ahorro_invertido, riqueza_alquilar))
+        valor_neto_acumulado.append((anio, alquiler_total, hipoteca_acumulada, valor_vivienda, valor_neto, ahorro_invertido, riqueza_alquilar))
 
     df = pd.DataFrame(valor_neto_acumulado, columns=["Año", "Coste de Alquilar", "Pagado en Hipoteca", "Valor Vivienda", "Valor Neto Compra", "Ahorro Invertido Alquilando", "Riqueza Alquilando"])
 
     st.success("Resultado comparativo")
     st.markdown(f"**💸 Coste total de alquilar durante {anios} años:** {alquiler_total:,.2f} €")
-    st.markdown(f"**💰 Pagos totales de hipoteca en {anios} años:** {df.iloc[-1]['Pagado en Hipoteca']:,.2f} €")
+    st.markdown(f"**💰 Pagos totales de hipoteca en {anios} años:** {hipoteca_acumulada:,.2f} €")
     st.markdown(f"**📈 Valor estimado de la vivienda tras {anios} años (2% anual):** {valor_vivienda:,.2f} €")
-    st.markdown(f"**💼 Valor neto acumulado por compra (valor - deuda pendiente):** {df.iloc[-1]['Valor Neto Compra']:,.2f} €")
+    st.markdown(f"**💼 Valor neto acumulado por compra (valor - pagos):** {df.iloc[-1]['Valor Neto Compra']:,.2f} €")
     st.markdown(f"**📊 Valor del ahorro invertido si se alquila:** {df.iloc[-1]['Ahorro Invertido Alquilando']:,.2f} €")
     st.markdown(f"**🧮 Riqueza neta alquilando (ahorro - alquiler):** {df.iloc[-1]['Riqueza Alquilando']:,.2f} €")
     st.markdown(f"**📆 Cuota mensual estimada de hipoteca:** {cuota_mensual:,.2f} €")
@@ -117,7 +112,7 @@ if calcular:
 
     st.subheader("❓ Preguntas frecuentes sobre esta simulación")
     with st.expander("¿Qué es 'Valor Neto Compra'?"):
-        st.markdown("Es la diferencia entre el valor estimado de la vivienda en el futuro y la deuda hipotecaria pendiente en ese momento. Representa el patrimonio neto real si decidieras vender la vivienda.")
+        st.markdown("Es la diferencia entre el valor estimado de la vivienda en el futuro y el total pagado en cuotas de hipoteca. Representa el patrimonio acumulado al comprar.")
 
     with st.expander("¿Qué significa 'Riqueza Alquilando'?"):
         st.markdown("Es el resultado de invertir el ahorro inicial y restar todos los pagos de alquiler. Representa el patrimonio neto acumulado si decides alquilar.")
