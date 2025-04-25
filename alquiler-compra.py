@@ -38,13 +38,13 @@ with st.form("comparador"):
     with col1:
         precio_vivienda = st.number_input("Precio de la vivienda (€):", value=250000, step=10000)
         ahorro = st.number_input("Ahorro inicial aportado (€):", value=50000, step=1000)
-        interes_hipoteca = st.number_input("Interés hipotecario anual (%):", value=3.0, step=0.1)
+        interes_hipoteca = st.number_input("Interés hipotecario anual (%):", value=2.0, step=0.1)
     with col2:
         alquiler_mensual = st.number_input("Alquiler mensual actual (€):", value=900, step=50)
-        incremento_alquiler = st.slider("% incremento anual del alquiler:", 0.0, 10.0, 2.0, step=0.1)
+        incremento_alquiler = st.slider("% incremento anual del alquiler:", 0.0, 3.0 , 0.0, step=0.1)
         anios = st.slider("Años de análisis:", 5, 40, 25)
 
-    tasa_inversion = st.slider("Rentabilidad esperada del ahorro si alquilas (% anual):", 0.0, 15.0, 2.0, step=0.1)
+    tasa_inversion = st.slider("Rentabilidad esperada del ahorro si alquilas (% anual):", 0.0, 15.0, 4.0, step=0.1)
     calcular = st.form_submit_button("Calcular 📊")
 
 if calcular:
